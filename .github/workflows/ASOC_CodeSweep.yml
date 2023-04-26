@@ -13,7 +13,6 @@ jobs:
         with:
           asoc_key: ${{secrets.ASOC_KEY}}
           asoc_secret: ${{secrets.ASOC_SECRET}}
-          publish_on_merge: true
-          application_id: ${{vars.ASOC_APPID}}
+
     env: 
       GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
