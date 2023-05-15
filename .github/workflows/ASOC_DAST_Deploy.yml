@@ -1,0 +1,32 @@
+name: Altoro Deploy - HCL AppScan DAST with ephemeral
+
+on:
+  workflow_dispatch
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build and run Altoro Docker instance
+      run: |
+        docker build -t altoromutual .
+        docker run -p 8080:8080 -d --name altoromutual altoromutual
+        echo "LOCAL_STARTING_URL=http://$HOSTNAME:8080/altoromutual" >> $GITHUB_ENV
+
+    - name: Run ASoC DAST Scan
+      uses: HCL-TECH-SOFTWARE/appscan-dast-action@main
+      with:
+        baseurl:  https://cloud.appscan.com/eu
+        asoc_key: ${{secrets.ASOC_KEY}}
+        asoc_secret: ${{secrets.ASOC_SECRET}}
+        application_id: ${{vars.ASOC_APPID}}
+        scan_type: 'staging'
+        dynamic_scan_type: dast
+        starting_URL: "${{ env.LOCAL_STARTING_URL }}"
+        ephemeral_presence: true
+    - uses: actions/upload-artifact@v3
+      name: Upload HCL AppScan HTML Report to Github Artifacts
+      with:
+        name: AppScan Security Scan HTML Report 
+        path: '**/AppScan*.html'
+      if: success() || failure()
