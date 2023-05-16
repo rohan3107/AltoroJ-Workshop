@@ -150,7 +150,7 @@ public class ServletUtil {
 	 * @param query
 	 *            query
 	 * @param rootDir
-	 *            directory, to search the contents of (e.g. "static" pages)
+	 *            directory, to search the contents of (e.g. "static" pages)       
 	 * @return
 	 */
 	public static String[] searchSite(String query, String rootDir) {
