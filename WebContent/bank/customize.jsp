@@ -33,16 +33,23 @@ IBM AltoroJ
 			String content = request.getParameter("content");
 			if (content != null && !content.equalsIgnoreCase("customize.jsp")){
 				if (content.startsWith("http://") || content.startsWith("https://")){
-					response.sendRedirect(content);
+					// Validate against open redirect vulnerability
+					String allowedHost = request.getServerName();
+					URL contentURL = new URL(content);
+					if (contentURL.getHost().equals(allowedHost)) {
+						response.sendRedirect(content);
+					} else {
+						response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid redirect.");
+					}
 				}
 			}
 		%>
-		<script><%=(request.getParameter("lang")==null)?"":ServletUtil.addUnVulnerableName(request.getParameter("lang"))%></script>
+		<script><%=(request.getParameter("lang")==null)?"":ServletUtil.filterXSS(request.getParameter("lang"))%></script>
 		<h1>Customize Site Language</h1>
 		
 		<form method="post">
 		  <p>
-		  Current Language: <%=(request.getParameter("lang")==null)?"":request.getParameter("lang")%>
+		  Current Language: <%=(request.getParameter("lang")==null)?"":ServletUtil.filterXSS(request.getParameter("lang"))%>
 		  </p>
 		
 		  <p>

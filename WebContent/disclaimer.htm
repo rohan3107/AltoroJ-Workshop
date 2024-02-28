@@ -9,14 +9,25 @@
   </style>
   <script>
 
+    function isValidUrl(url) {
+      try {
+        new URL(url);
+        return true;
+      } catch (e) {
+        return false;
+      }
+    }
+
     function go() {
 	    var iPos = document.URL.indexOf("url=")+4;
-    	var sDst = document.URL.substring(iPos,document.URL.length); 
-        if (window.opener) {
-      		window.opener.location.href = sDst;
-      		cl();
-        } else {
-        	window.location.href = sDst;
+    	var sDst = decodeURIComponent(document.URL.substring(iPos,document.URL.length)); 
+        if (isValidUrl(sDst)) {
+          if (window.opener) {
+        		window.opener.location.href = sDst;
+        		cl();
+          } else {
+          	window.location.href = sDst;
+          }
         }
     }
 
@@ -25,14 +36,14 @@
     }
 
     var iPos = document.URL.indexOf("url=")+4;
-  	var sDst = document.URL.substring(iPos,document.URL.length);
+  	var sDst = decodeURIComponent(document.URL.substring(iPos,document.URL.length));
     // if redirection is in the application's domain, don't ask for authorization
-	if ( sDst.indexOf("http") == 0 && sDst.indexOf(document.location.hostname) != -1 ) {
+	if (isValidUrl(sDst) && sDst.indexOf("http") == 0 && sDst.indexOf(document.location.hostname) != -1 ) {
 		if (window.opener) {
-      		window.opener.location.href = "http" + sDst.substring(4);
+      		window.opener.location.href = sDst;
       		cl();
         } else {
-        	window.location.href = "http" + sDst.substring(4);
+        	window.location.href = sDst;
         }
 	}
 
@@ -64,10 +75,3 @@
 
 </body>
 </html>
-
-
-
-
-
-
-
