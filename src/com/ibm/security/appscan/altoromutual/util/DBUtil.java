@@ -370,7 +370,9 @@ public class DBUtil {
 	public static Transaction[] getTransactions(String startDate, String endDate, Account[] accounts, int rowCount) throws SQLException {
 		
 		if (accounts == null || accounts.length == 0)
-			return null;
+			{
+			    return null;
+			}
 
 			Connection connection = getConnection();
 
